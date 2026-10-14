@@ -1,0 +1,22 @@
+[project]
+name = "rfm-quick-build"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "PHZeek", email = "ezekieladohpub@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "openpyxl>=3.1.5",
+    "pandas>=3.0.6",
+    "pyarrow>=26.0.0",
+]
+
+[project.scripts]
+rfm-quick-build = "rfm_quick_build:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"

@@ -1,0 +1,14 @@
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+
+# Data — not ours to redistribute; download it from UCI (see README)
+data/
+
+# Generated outputs (regenerate with: uv run python rfm.py)
+outputs/
+
+# Secrets and OS files
+.env
+.DS_Store
