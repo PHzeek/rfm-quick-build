@@ -1,7 +1,8 @@
-"""Quick Build #1 — RFM segments from a real order export.
+"""RFM customer segmentation on the UCI Online Retail II dataset.
 
 Run: uv run python rfm.py
-Fill in the five TODOs. rfm_solution.py has the answers — try first, then compare."""
+See README.md for setup and results.
+"""
 import time 
 from pathlib import Path
 
@@ -34,11 +35,6 @@ def clean(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     n = len(df); df = df[~inv_mask]; report["cancellations"] = n - len(df)
     qp_mask = (df["Quantity"] <= 0) | (df["Price"] <= 0)
     n = len(df); df = df[~qp_mask]; report["zero/negative qty or price"] = n - len(df)
-    # TODO 1: drop cancellations — invoices whose number starts with "C".
-    #         Follow the pattern above: record n, filter, then report["cancellations"] = n - len(df)
-
-    # TODO 2: drop rows where Quantity <= 0 or Price <= 0.
-    #         Record the count as report["zero/negative qty or price"]
     df = df.assign(Revenue=df["Quantity"] * df["Price"], **{"Customer ID": df["Customer ID"].astype(int)})
     report["clean rows"] = len(df)
     return df, report
@@ -51,11 +47,6 @@ def compute_rfm(df: pd.DataFrame) -> pd.DataFrame:
         Frequency=("Invoice", "nunique"),
         Monetary=("Revenue", "sum"),
     )
-    # TODO 3: one row per customer with three columns:
-    #   Recency   = days between `snapshot` and that customer's most recent InvoiceDate
-    #   Frequency = number of distinct invoices (not rows — one invoice has many lines)
-    #   Monetary  = total Revenue
-    # Hint: df.groupby("Customer ID").agg(Recency=("InvoiceDate", ...), Frequency=(...), Monetary=(...))
     return rfm
 
 
@@ -64,9 +55,6 @@ def score_rfm(rfm: pd.DataFrame) -> pd.DataFrame:
     rfm["R"] = pd.qcut(rfm["Recency"].rank(method="first"), 5, labels=[5, 4, 3, 2, 1]).astype(int)
     rfm["F"] = pd.qcut(rfm["Frequency"].rank(method="first"), 5, labels=[1, 2, 3, 4, 5]).astype(int)
     rfm["M"] = pd.qcut(rfm["Monetary"].rank(method="first"), 5, labels=[1, 2, 3, 4, 5]).astype(int)
-    # TODO 4: score F and M the same way — but notice the labels flip.
-    #   For Recency, FEWER days is better, so the labels run 5 → 1.
-    #   For Frequency and Monetary, MORE is better, so they run 1 → 5.
     return rfm 
 
 
@@ -79,11 +67,6 @@ def name_segment(r: int, f: int, m: int) -> str:
         return "Promising"
     if r <= 2 and f <= 2:
         return "Lost"
-    # TODO 5: add the three segments from the Day 10 post, in this order:
-    #   "At risk"   — haven't bought lately (r <= 2) but used to buy often OR spend a lot (f >= 4 or m >= 4)
-    #   "Promising" — bought recently (r >= 4) but only once or twice (f <= 2)
-    #   "Lost"      — not recent (r <= 2) and rarely bought (f <= 2)
-    # Order matters: a customer matches the FIRST rule that fits.
     return "Steady"
 
 
