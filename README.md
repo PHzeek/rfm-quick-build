@@ -28,6 +28,11 @@ Across 5,878 customers after cleaning:
 4. **Score** each measure 1–5 by fifths (ranked first, so ties don't break the bins).
 5. **Segment** with five plain-English rules: Champions, At risk, Promising, Lost, Steady.
 
+## Quick Build #2 — the churn-rhythm column
+
+`rhythm.py`: for each customer, days since last order ÷ their median gap between orders. Above 2 means drifting.
+1,397 of 5,878 customers (23.8%) were drifting, holding 25.7% of revenue. Run: `uv run python rhythm.py`
+
 ## Run it
 
 Requires [uv](https://docs.astral.sh/uv/).
